@@ -6,7 +6,9 @@ import time
 
 service = service(executable_path="chromedriver.exe")
 driver = webdriver.Chrome(service=service)
-driver.get("https://google.com")
+driver.get("https://satsuitequestionbank.collegeboard.org/")
+findQuestionsButton = driver.find_element(By.CLASS_NAME, "cb-btn cb-btn-black").click()
+
 
 time.sleep(10)
 driver.quit()
