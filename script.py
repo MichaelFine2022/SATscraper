@@ -11,7 +11,7 @@ driver = webdriver.Chrome(service=service)
 driver.get("https://satsuitequestionbank.collegeboard.org/")
 #its a python hashset lmao
 visited = set()
-def scrapeFromID(element, curWriter):
+def scrapeFromID(element, writer):
     element_id = element.get_attribute('id')
     element.click()
 
