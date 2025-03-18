@@ -46,8 +46,6 @@ def scrapeFromID(element, curWriter):
     exitButton.click()
 def getIDs(writer):
     idSet = driver.find_elements(By.CSS_SELECTOR, 'button.cb-btn.square.cb-roboto.cb-btn-naked.view-question-button')
-    print("getting IDs")
-    print(len(idSet))
     for element in idSet:
             print("Current element " + element.text)
             
@@ -73,6 +71,7 @@ def startUp():
     time.sleep(1)
     submit = driver.find_element(By.CLASS_NAME, "cb-btn square cb-roboto cb-btn-primary").click()
     time.sleep(10)
+#do you think this stuff counts as CP?
 startUp()
 with open('output.csv', mode='w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames=["id", "question", "answer"])
