@@ -4,9 +4,12 @@ from selenium.webdriver.chrome.service import service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
-service = service(executable_path="chromedriver.exe")
+service = Service(executable_path="chromedriver.exe")
 driver = webdriver.Chrome(service=service)
 driver.get("https://satsuitequestionbank.collegeboard.org/")
 #its a python hashset lmao
@@ -56,9 +59,24 @@ def getIDs(writer):
                 scrapeFromID(element, writer)
                 time.sleep(2)
 def startUp(): 
-    time.sleep(6)
-    tfindQuestionsButton = driver.find_element(By.CLASS_NAME, "cb-btn cb-btn-black").click()
-    chooseAssessments = driver.find_element(By.ID,"selectAssessmentType").click()
+    time.sleep(10)
+    try:
+        tfindQuestionsButton = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "cb-btn.cb-btn-black"))
+        )
+        tfindQuestionsButton.click()
+    except Exception as e:
+        print(f"Error finding the element: {e}")
+        return
+    time.sleep(10)
+    try:
+        chooseAssessments = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.ID, "selectAssessmentType"))
+        )
+        chooseAssessments.click()
+    except Exception as e:
+        print(f"Error finding the element: {e}")
+        return
     chooseAssessments.select_by_value(99)
     time.sleep(1)
     selectType = driver.find_element(By.ID,"selectTestType").click()
