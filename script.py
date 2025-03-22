@@ -1,8 +1,5 @@
 from selenium import webdriver     
- 
-# For using sleep function because selenium 
-# works only when the all the elements of the 
-# page is loaded.
+
 import time 
 import csv
   
@@ -10,18 +7,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
  
-# Creating an instance webdriver
 driver = webdriver.Chrome() 
 driver.get('https://satsuitequestionbank.collegeboard.org/digital/search')
 
 visited = set()
 
 def startUp():
-    # Let's the user see and also load the element 
     time.sleep(6)
-    #assessmentPath = '/html/body/div[2]/div[3]/div[2]/div/div/div[1]/div/div/div[2]/div/div/div/select'
 
-    print("Clicking assessment")
+    print('Clicking assessment')
     assessmentSelection = Select(driver.find_element(By.ID, 'selectAssessmentType'))
     assessmentSelection.select_by_visible_text('SAT')
     # sets it to SAT 
@@ -47,7 +41,7 @@ def startUp():
     firstSearch = driver.find_element(By.CSS_SELECTOR, 'button.cb-btn:nth-child(2)')
     firstSearch.click()
 
-    time.sleep(20)
+    time.sleep(10)
 
 def getIDs(writer):
     idSet = driver.find_elements(By.CSS_SELECTOR, 'button.cb-btn.square.cb-roboto.cb-btn-naked.view-question-button')
@@ -84,10 +78,8 @@ def scrapeFromID(element, curWriter):
 
     combinedAnswer = correctAnswer + '\n' + lowerAnswer.text
 
-    combinedQuestion = combinedQuestion
-    combinedAnswer = combinedAnswer
-
-    toWrite = [element_id, combinedQuestion, combinedAnswer]
+    type =  driver.find_element(By.XPATH, '/html/body/div[@id="root"]/div[@class="App"]/div[@id="main-container"]/div/div[@id="question-modal"]/div/div/div/div/div/div/div[@class="cb-dialog-content"]/div[@class="question-info"]/div[@class="question-detail-info"]/div/div[2]/div').text()
+    toWrite = [element_id, type, combinedQuestion, combinedAnswer]
 
     with open('output.csv', mode='a', newline='', encoding='utf-8') as file:
         
@@ -100,9 +92,13 @@ def scrapeFromID(element, curWriter):
 if __name__ == "__main__":
     startUp()
     with open('output.csv', mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=["id", "question", "answer"])
+        writer = csv.DictWriter(file, fieldnames=["id","type", "question", "answer"])
         
         # Write the header
         writer.writeheader()
-    getIDs(writer)
-    #driver.close()
+    while (True):
+        time.sleep(5)
+        getIDs(writer)
+        time.sleep(2)
+        driver.find_element(By.CLASS_NAME, 'cb-icon cb-right').click()
+        time.sleep(1)
