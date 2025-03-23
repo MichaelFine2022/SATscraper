@@ -97,7 +97,15 @@ def scrapeFromID(element, curWriter):
     with open('output.csv', mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(toWrite)
-
+        
+    filename = f"{difficulty}.csv" 
+    with open(filename, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(toWrite)
+    filename = f"{type}.csv" 
+    with open(filename, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(toWrite)
     exitButton = driver.find_element(By.CLASS_NAME, 'cb-glyph.cb-x-mark')
     exitButton.click()
 
