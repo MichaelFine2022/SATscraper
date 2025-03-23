@@ -72,18 +72,29 @@ def scrapeFromID(element, curWriter):
     
     correctAnswerString = upperAnswer.find_element(By.TAG_NAME, 'h6')
     correctAnswerChar = upperAnswer.find_element(By.TAG_NAME, 'p')
+    wait = WebDriverWait(driver, 10)
+    answerchoices = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".answer-choices.cb-margin-top-16"))
+    )
+    choices = answerchoices.find_elements(By.TAG_NAME, "p")
 
+    choice_labels = ["A", "B", "C", "D"]
+    totalchoices = ""
+
+    for i in range(0,4): 
+        totalchoices += f"{choice_labels[i]}. {choices[i].text}\n"
+    
     correctAnswer = correctAnswerString.text + correctAnswerChar.text
 
-    combinedQuestion = upperPrompt.text + '\n' + lowerPrompt.text
-
-    combinedAnswer = correctAnswer + '\n' + lowerAnswer.text
+    combinedQuestion = upperPrompt.text + '\n' + lowerPrompt.text + '\n' + totalchoices
+    combinedAnswer = correctAnswer + '\n' + lowerAnswer.text 
 
     type = driver.find_element(By.XPATH, '//div[@id="question-modal"]//div[@class="question-detail-info"]/div/div[4]/div').text
-    toWrite = [element_id, type, combinedQuestion, combinedAnswer]
+    difficulty = driver.find_element(By.CLASS_NAME, 'question-difficulty.cb-margin-top-48')
+    difficulty = difficulty.find_element(By.TAG_NAME, 'p').text
+    toWrite = [element_id, type, difficulty, combinedQuestion, combinedAnswer]
 
     with open('output.csv', mode='a', newline='', encoding='utf-8') as file:
-        
         writer = csv.writer(file)
         writer.writerow(toWrite)
 
@@ -93,9 +104,7 @@ def scrapeFromID(element, curWriter):
 if __name__ == "__main__":
     startUp()
     with open('output.csv', mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=["id","type", "question", "answer"])
-        
-        # Write the header
+        writer = csv.DictWriter(file, fieldnames=["id","type","difficulty", "question", "answer"])
         writer.writeheader()
     while (True):
         time.sleep(5)
