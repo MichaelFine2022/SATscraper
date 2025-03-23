@@ -2,7 +2,8 @@ from selenium import webdriver
 
 import time 
 import csv
-  
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -61,7 +62,7 @@ def scrapeFromID(element, curWriter):
     element_id = element.get_attribute('id')
     element.click()
 
-    time.sleep(10)
+    time.sleep(20)
     print("Finding elements")
     upperPrompt = driver.find_element(By.CLASS_NAME, 'prompt.cb-margin-top-32')
     lowerPrompt = driver.find_element(By.CLASS_NAME, 'question.cb-margin-top-16')
@@ -78,7 +79,7 @@ def scrapeFromID(element, curWriter):
 
     combinedAnswer = correctAnswer + '\n' + lowerAnswer.text
 
-    type =  driver.find_element(By.XPATH, '/html/body/div[@id="root"]/div[@class="App"]/div[@id="main-container"]/div/div[@id="question-modal"]/div/div/div/div/div/div/div[@class="cb-dialog-content"]/div[@class="question-info"]/div[@class="question-detail-info"]/div/div[2]/div').text()
+    type = driver.find_element(By.XPATH, '//div[@id="question-modal"]//div[@class="question-detail-info"]/div/div[4]/div').text
     toWrite = [element_id, type, combinedQuestion, combinedAnswer]
 
     with open('output.csv', mode='a', newline='', encoding='utf-8') as file:
@@ -100,5 +101,9 @@ if __name__ == "__main__":
         time.sleep(5)
         getIDs(writer)
         time.sleep(2)
-        driver.find_element(By.CLASS_NAME, 'cb-icon cb-right').click()
-        time.sleep(1)
+        wait = WebDriverWait(driver, 10)
+        buttons = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".cb-btn.cb-btn-square.cb-btn-greyscale")))
+        if buttons:
+            last_button = buttons[-1]
+            driver.execute_script("arguments[0].scrollIntoView(true);", last_button) 
+            driver.execute_script("arguments[0].click();", last_button)     
